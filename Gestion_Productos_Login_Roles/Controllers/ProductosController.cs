@@ -13,12 +13,20 @@ namespace Gestion_Productos_Login_Roles.Controllers
             _context = context;
         }
 
+        // helper simple para roles en sesión (espera "Rol" = "admin" o "empleado")
+        private bool IsAdmin() =>
+            HttpContext.Session.GetString("Rol")?.ToLower() == "admin";
+
         public async Task<IActionResult> Index()
         {
             if (HttpContext.Session.GetString("Usuario") == null)
                 return RedirectToAction("Index", "Login");
 
             var productos = await _context.Productos.Include(p => p.Categoria).ToListAsync();
+
+            // enviar a la vista si es admin para mostrar botones
+            ViewBag.EsAdmin = IsAdmin();
+
             return View(productos);
         }
 
@@ -61,6 +69,9 @@ namespace Gestion_Productos_Login_Roles.Controllers
             if (HttpContext.Session.GetString("Usuario") == null)
                 return RedirectToAction("Index", "Login");
 
+            if (!IsAdmin()) // sólo admin puede editar
+                return RedirectToAction(nameof(Index));
+
             if (id == null) return NotFound();
 
             var producto = await _context.Productos.FindAsync(id.Value);
@@ -75,6 +86,12 @@ namespace Gestion_Productos_Login_Roles.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Producto producto)
         {
+            if (HttpContext.Session.GetString("Usuario") == null)
+                return RedirectToAction("Index", "Login");
+
+            if (!IsAdmin()) // sólo admin puede editar
+                return RedirectToAction(nameof(Index));
+
             if (id != producto.Id) return BadRequest();
 
             if (!ModelState.IsValid)
@@ -112,6 +129,9 @@ namespace Gestion_Productos_Login_Roles.Controllers
         {
             if (HttpContext.Session.GetString("Usuario") == null)
                 return RedirectToAction("Index", "Login");
+
+            if (!IsAdmin()) // sólo admin puede eliminar
+                return RedirectToAction(nameof(Index));
 
             var producto = await _context.Productos.FindAsync(id);
             if (producto == null)
