@@ -1,8 +1,24 @@
-﻿<form method="post">
-    <label>Usuario:</label>
-    <input type="text" name="usuario" required />
-    <label>Clave:</label>
-    <input type="password" name="clave" required />
-    <button type="submit">Ingresar</button>
-    <p style="color:red">@ViewBag.Error</p>
-</form>
+﻿@{
+    ViewData["Title"] = "Inicio de Sesión";
+}
+
+<div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div class="card shadow p-4" style="width: 360px;">
+        <h3 class="text-center text-primary mb-4">Iniciar Sesión</h3>
+
+        <form asp-action="Index" method="post">
+            <div class="form-floating mb-3">
+                <input type="text" name="usuario" class="form-control" id="usuario" placeholder="Usuario" required />
+                <label for="usuario">Usuario</label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input type="password" name="clave" class="form-control" id="clave" placeholder="Contraseña" required />
+                <label for="clave">Contraseña</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+            <p style="color:red">@ViewBag.Error</p>
+        </form>
+    </div>
+</div>
