@@ -70,7 +70,7 @@ namespace Gestion_Productos_Login_Roles.Controllers
             return View(producto);
         }
 
-        // Edit - POST
+        // Edit - POST (reemplazado: obtener la entidad, asignar campos y guardar)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Producto producto)
@@ -83,9 +83,17 @@ namespace Gestion_Productos_Login_Roles.Controllers
                 return View(producto);
             }
 
+            var entidad = await _context.Productos.FindAsync(id);
+            if (entidad == null) return NotFound();
+
+            // Asignar sólo las propiedades que queremos actualizar
+            entidad.Nombre = producto.Nombre;
+            entidad.Precio = producto.Precio;
+            entidad.Stock = producto.Stock;
+            entidad.IdCategoria = producto.IdCategoria;
+
             try
             {
-                _context.Productos.Update(producto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
