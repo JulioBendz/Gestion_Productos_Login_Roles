@@ -29,8 +29,8 @@
     @if (ViewBag.Categorias != null)
     {
         <div class="form-group mb-3">
-            <label asp-for="CategoriaId" class="control-label">Categoría</label>
-            <select asp-for="CategoriaId" class="form-control" asp-items="@(new SelectList(ViewBag.Categorias, "Id", "Nombre"))"></select>
+            <label asp-for="IdCategoria" class="control-label">Categoría</label>
+            <select asp-for="IdCategoria" class="form-control" asp-items="@(new SelectList(ViewBag.Categorias, "Id", "Nombre"))"></select>
         </div>
     }
 
