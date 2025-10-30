@@ -17,9 +17,10 @@ namespace Gestion_Productos_Login_Roles.Models
         public int Stock { get; set; }
 
         [Display(Name = "Categoría")]
+        [Range(1, int.MaxValue, ErrorMessage = "Seleccione una categoría")]
         public int IdCategoria { get; set; }
 
         [ForeignKey("IdCategoria")]
-        public required Categoria Categoria { get; set; }
+        public Categoria? Categoria { get; set; }
     }
 }

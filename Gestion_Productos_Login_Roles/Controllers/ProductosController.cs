@@ -30,16 +30,28 @@ namespace Gestion_Productos_Login_Roles.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Producto producto)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(producto);
+                TempData["ModelStateErrors"] = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                ViewBag.Categorias = _context.Categorias.ToList();
+                return View(producto);
+            }
+
+            try
+            {
+                _context.Productos.Add(producto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Categorias = _context.Categorias.ToList();
-            return View(producto);
+            catch (Exception ex)
+            {
+                TempData["SaveError"] = ex.Message;
+                ViewBag.Categorias = _context.Categorias.ToList();
+                return View(producto);
+            }
         }
 
         // Editar y Eliminar igual con validaciones
