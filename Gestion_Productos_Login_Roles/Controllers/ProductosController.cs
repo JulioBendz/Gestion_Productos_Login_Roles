@@ -54,6 +54,75 @@ namespace Gestion_Productos_Login_Roles.Controllers
             }
         }
 
-        // Editar y Eliminar igual con validaciones
+        // Edit - GET
+        [HttpGet]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (HttpContext.Session.GetString("Usuario") == null)
+                return RedirectToAction("Index", "Login");
+
+            if (id == null) return NotFound();
+
+            var producto = await _context.Productos.FindAsync(id.Value);
+            if (producto == null) return NotFound();
+
+            ViewBag.Categorias = _context.Categorias.ToList();
+            return View(producto);
+        }
+
+        // Edit - POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Producto producto)
+        {
+            if (id != producto.Id) return BadRequest();
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categorias = _context.Categorias.ToList();
+                return View(producto);
+            }
+
+            try
+            {
+                _context.Productos.Update(producto);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Productos.Any(e => e.Id == producto.Id))
+                    return NotFound();
+                throw;
+            }
+        }
+
+        // Delete - POST (se invoca desde Index mediante formulario)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            if (HttpContext.Session.GetString("Usuario") == null)
+                return RedirectToAction("Index", "Login");
+
+            var producto = await _context.Productos.FindAsync(id);
+            if (producto == null)
+            {
+                TempData["SaveError"] = "Producto no encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                _context.Productos.Remove(producto);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["SaveError"] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
+        }
     }
 }

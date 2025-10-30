@@ -1,5 +1,5 @@
 ﻿<h2>Listado de Productos</h2>
-<a href="/Productos/Create">Nuevo Producto</a>
+<a asp-action="Create" class="btn btn-primary mb-3">Nuevo Producto</a>
 <table class="table">
     <thead>
         <tr><th>Nombre</th><th>Precio</th><th>Stock</th><th>Categoría</th><th></th></tr>
@@ -11,10 +11,14 @@
                 <td>@p.Nombre</td>
                 <td>@p.Precio</td>
                 <td>@p.Stock</td>
-                <td>@p.Categoria.Nombre</td>
+                <td>@p.Categoria?.Nombre</td>
                 <td>
-                    <a href="/Productos/Edit/@p.Id">Editar</a> |
-                    <a href="/Productos/Delete/@p.Id">Eliminar</a>
+                    <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-primary">Editar</a>
+
+                    <form asp-action="Delete" asp-route-id="@p.Id" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este producto?');">Eliminar</button>
+                    </form>
                 </td>
             </tr>
         }
