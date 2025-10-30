@@ -1,0 +1,22 @@
+﻿<h2>Listado de Productos</h2>
+<a href="/Productos/Create">Nuevo Producto</a>
+<table class="table">
+    <thead>
+        <tr><th>Nombre</th><th>Precio</th><th>Stock</th><th>Categoría</th><th></th></tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Nombre</td>
+                <td>@p.Precio</td>
+                <td>@p.Stock</td>
+                <td>@p.Categoria.Nombre</td>
+                <td>
+                    <a href="/Productos/Edit/@p.Id">Editar</a> |
+                    <a href="/Productos/Delete/@p.Id">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
